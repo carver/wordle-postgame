@@ -2,8 +2,8 @@ from collections import Counter, defaultdict
 
 from words import valid, answers
 
-def best_guess(possible_answers):
-    averages = [(guess, average_remaining(possible_answers, guess)) for guess in valid]
+def best_guess(possible_answers, possible_guesses):
+    averages = [(guess, average_remaining(possible_answers, guess)) for guess in possible_guesses]
     return min(averages, key=lambda guess, avg_remaining: avg_remaining)
 
 def average_remaining(possible_answers, guess):
