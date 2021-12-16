@@ -22,6 +22,14 @@ def filter_exact_count(letter, exact_occurrances):
 def filter_eliminated(letter):
     return lambda word: letter not in word
 
+def filter_intersection(filters):
+    def joined_filter(element):
+        for f in filters:
+            if not f(element):
+                return False
+        return True
+    return joined_filter
+
 def calculate_remaining(candidate_answers, actual_answer, guess):
     filters = []
     guessed_count = defaultdict(int)
@@ -45,10 +53,8 @@ def calculate_remaining(candidate_answers, actual_answer, guess):
             # Discovered that letter is not in word
             filters.append(filter_eliminated(letter))
 
-    remaining_answers = candidate_answers
-    for f in filters:
-        remaining_answers = set(filter(f, remaining_answers))
-    return len(remaining_answers)
+    joined_filter = filter_intersection(filters)
+    return len(set(filter(joined_filter, candidate_answers)))
 
 
 if __name__ == '__main__':
