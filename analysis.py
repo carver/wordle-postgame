@@ -24,26 +24,22 @@ def filter_eliminated(letter):
 
 def calculate_remaining(candidate_answers, actual_answer, guess):
     filters = []
-    guessed_count = defaultdict(int)
-    letter_count = Counter(actual_answer)
-    for idx, letter in enumerate(guess):
-        if letter in actual_answer:
-            guessed_count[letter] += 1
-
-            if actual_answer[idx] == guess[idx]:
-                # Found letter in correct position
-                filters.append(filter_exact(idx, letter))
-
-            # Handle letter count, whether or not position was correct
-            # For example, what if this was the 2nd repeat letter in correct
-            # position, but the first was found out of place?
-            if guessed_count[letter] <= letter_count[letter]:
-                filters.append(filter_min_count(letter, guessed_count[letter]))
-            else:
-                filters.append(filter_exact_count(letter, letter_count[letter]))
-        else:
+    actual_counts = Counter(actual_answer)
+    for guess_letter, guess_count in Counter(actual_answer).items():
+        actual_count = actual_counts[guess_letter]
+        if actual_count == 0:
             # Discovered that letter is not in word
+            # This test isn't strictly necessary, but ought to be a bit faster to filter
             filters.append(filter_eliminated(letter))
+        elif guess_count > actual_count:
+            filters.append(filter_exact_count(guess_letter, actual_count))
+        else:
+            filters.append(filter_min_count(guess_letter, guess_count))
+
+    for idx, letter in enumerate(guess):
+        if actual_answer[idx] == guess[idx]:
+            # Found letter in correct position
+            filters.append(filter_exact(idx, letter))
 
     remaining_answers = candidate_answers
     for f in filters:
