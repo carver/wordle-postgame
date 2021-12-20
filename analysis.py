@@ -110,12 +110,50 @@ def most_positional_letters():
     return set()
 
 
+def posthoc_analysis(actual, guesses):
+    print(f"Post-hoc analysis of game with answer {actual!r}")
+
+    remaining = valid
+    for idx, guess in enumerate(guesses):
+        print(f"With hindsight, {len(remaining)} words remain")
+
+        guess_count = idx + 1
+        print(f"\nGuess #{guess_count}: {guess!r}")
+
+        new_remaining = get_remaining(remaining, actual, guess)
+
+        if remaining != valid:
+            # These are too slow to calculate for the first guess, with the full valid set
+
+            guess_score = average_remaining(remaining, guess)
+            print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
+
+            algo_guesses = guess_averages(remaining, valid)
+            best_algo_guess = min(algo_guesses, key=lambda guess: guess[1])
+            worst_algo_guess = max(algo_guesses, key=lambda guess: guess[1])
+            print(f"best algo guess = {best_algo_guess}")
+            print(f"worst algo guess = {worst_algo_guess}")
+
+        remaining = new_remaining
+
+    print(f"Words left: {len(remaining)}")
+    if len(remaining) < 40:
+        print(remaining)
+
+
 if __name__ == '__main__':
-    assert calculate_remaining(["aoeuh"], "aoeuh", "") == 1
-    assert calculate_remaining(["ab"], "ab", "ac") == 1  # Catch a bad closure
-    assert calculate_remaining(["aoeuh"], "aoeuh", "aoeuh") == 1
-    assert calculate_remaining(["aoeuh"], "aoeuh", "tnsgc") == 1
-    assert calculate_remaining(["aoeuh"], "aoeuh", "hueoa") == 1
-    assert calculate_remaining(["baa", "bac"], "baa", "aab") == 1  # Catch a bad closure
-    assert calculate_remaining(["baac", "baaa"], "baac", "aaab") == 1  # Catch a bad closure
-    assert calculate_remaining(["ab"], "ab", "cb") == 1  # Catch a bad closure
+    import sys
+    args = sys.argv
+    if len(args) > 1 and args[1] == 'test':
+        assert calculate_remaining(["aoeuh"], "aoeuh", "") == 1
+        assert calculate_remaining(["ab"], "ab", "ac") == 1  # Catch a bad closure
+        assert calculate_remaining(["aoeuh"], "aoeuh", "aoeuh") == 1
+        assert calculate_remaining(["aoeuh"], "aoeuh", "tnsgc") == 1
+        assert calculate_remaining(["aoeuh"], "aoeuh", "hueoa") == 1
+        assert calculate_remaining(["baa", "bac"], "baa", "aab") == 1  # Catch a bad closure
+        assert calculate_remaining(["baac", "baaa"], "baac", "aaab") == 1  # Catch a bad closure
+        assert calculate_remaining(["ab"], "ab", "cb") == 1  # Catch a bad closure
+    else:
+        actual = 'brake'
+        guesses = ['roate', 'clung', 'wimps', 'drake']
+        posthoc_analysis(actual, guesses)
