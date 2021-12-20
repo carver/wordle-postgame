@@ -110,6 +110,23 @@ def most_positional_letters():
     return set()
 
 
+def ai_play(actual):
+    guess_count = 1
+    first_guess = 'roate'
+    print(f"Guess #{guess_count}: {first_guess!r}")
+    remaining = get_remaining(valid, actual, first_guess)
+
+    while len(remaining) > 1:
+        print(f"{len(remaining)} more words found")
+        guess, avg_remain = best_guess(remaining, valid)
+        guess_count += 1
+        print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
+        remaining = get_remaining(remaining, actual, guess)
+
+    if len(remaining) == 1 and guess not in remaining:
+        guess_count += 1
+        print(f"Trivial guess #{guess_count}: {remaining.pop()}")
+
 def posthoc_analysis(actual, guesses):
     print(f"Post-hoc analysis of game with answer {actual!r}")
 
@@ -153,6 +170,8 @@ if __name__ == '__main__':
         assert calculate_remaining(["baa", "bac"], "baa", "aab") == 1  # Catch a bad closure
         assert calculate_remaining(["baac", "baaa"], "baac", "aaab") == 1  # Catch a bad closure
         assert calculate_remaining(["ab"], "ab", "cb") == 1  # Catch a bad closure
+    elif len(args) == 3 and args[1] == 'ai':
+        ai_play(args[2])
     else:
         actual = 'brake'
         guesses = ['roate', 'clung', 'wimps', 'drake']
