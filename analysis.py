@@ -3,8 +3,11 @@ from collections import Counter, defaultdict
 from words import valid, answers
 
 def best_guess(possible_answers, possible_guesses):
-    averages = [(guess, average_remaining(possible_answers, guess)) for guess in possible_guesses]
-    return min(averages, key=lambda guess, avg_remaining: avg_remaining)
+    averages = guess_averages(possible_answers, possible_guesses)
+    return min(averages, key=lambda guess: guess[1])
+
+def guess_averages(possible_answers, possible_guesses):
+    return [(guess, average_remaining(possible_answers, guess)) for guess in possible_guesses]
 
 def average_remaining(possible_answers, guess):
     remaining = [calculate_remaining(possible_answers, answer, guess) for answer in possible_answers]
@@ -12,6 +15,9 @@ def average_remaining(possible_answers, guess):
 
 def filter_exact(index, letter):
     return lambda word: word[index] == letter
+
+def filter_letter_elsewhere(index, letter):
+    return lambda word: word[index] != letter
 
 def filter_min_count(letter, min_occurrances):
     return lambda word: Counter(word)[letter] >= min_occurrances
@@ -30,7 +36,7 @@ def filter_intersection(filters):
         return True
     return joined_filter
 
-def calculate_remaining(candidate_answers, actual_answer, guess):
+def make_filters(actual_answer, guess):
     filters = []
     guessed_count = defaultdict(int)
     letter_count = Counter(actual_answer)
@@ -56,8 +62,52 @@ def calculate_remaining(candidate_answers, actual_answer, guess):
             # Discovered that letter is not in word
             filters.append(filter_eliminated(letter))
 
+    return filters
+
+def apply_filters(candidate_answers, filters):
     joined_filter = filter_intersection(filters)
-    return len(set(filter(joined_filter, candidate_answers)))
+    return set(filter(joined_filter, candidate_answers))
+
+def get_remaining(candidate_answers, actual_answer, guess):
+    filters = make_filters(actual_answer, guess)
+    return apply_filters(candidate_answers, filters)
+
+def calculate_remaining(*args):
+    return len(get_remaining(*args))
+
+def top_positional_letters():
+    # returns top_letters = [(0, 's'), (1, 'a'), (2, 'a'), (3, 'e'), (4, 's')]
+    pos_c = [Counter(),Counter(),Counter(),Counter(),Counter()]
+    for v in valid:
+        for i in range(0,5):
+            pos_c[i].update(v[i])
+    return pos_c
+
+
+def word_matches_positional_letters(word, positionals):
+    for index, letter in positionals.items():
+        if word[index] != letter:
+            return False
+    return True
+
+
+def all_matching_positional_letters(words, positionals):
+    return {w for w in words if word_matches_positional_letters(w, positionals)}
+
+def most_positional_letters():
+    from itertools import combinations
+    top_letters = [(0, 's'), (1, 'a'), (2, 'a'), (3, 'e'), (4, 's')]
+    for count in reversed(range(4)):
+        combos = combinations(top_letters, count)
+        matching_words = set()
+        for positionals in combos:
+            words_with_positionals = all_matching_positional_letters(valid, dict(positionals))
+            matching_words.update(words_with_positionals)
+
+        if matching_words:
+            return (count, matching_words)
+
+    return set()
 
 
 if __name__ == '__main__':
