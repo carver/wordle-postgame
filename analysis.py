@@ -41,6 +41,9 @@ def calculate_remaining(candidate_answers, actual_answer, guess):
             if actual_answer[idx] == guess[idx]:
                 # Found letter in correct position
                 filters.append(filter_exact(idx, letter))
+            else:
+                # Know that letter is *not* in this position
+                filters.append(filter_letter_elsewhere(idx, letter))
 
             # Handle letter count, whether or not position was correct
             # For example, what if this was the 2nd repeat letter in correct
