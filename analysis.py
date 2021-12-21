@@ -132,7 +132,7 @@ def posthoc_analysis(actual, guesses):
 
     remaining = valid
     for idx, guess in enumerate(guesses):
-        print(f"With hindsight, {len(remaining)} words remain")
+        print(f"After elimination, {len(remaining)} words remain")
 
         guess_count = idx + 1
         print(f"\nGuess #{guess_count}: {guess!r}")
@@ -153,7 +153,7 @@ def posthoc_analysis(actual, guesses):
 
         remaining = new_remaining
 
-    print(f"Words left: {len(remaining)}")
+    print(f"After elimination, {len(remaining)} words remain")
     if len(remaining) < 40:
         print(remaining)
 
@@ -172,7 +172,9 @@ if __name__ == '__main__':
         assert calculate_remaining(["ab"], "ab", "cb") == 1  # Catch a bad closure
     elif len(args) == 3 and args[1] == 'ai':
         ai_play(args[2])
-    else:
-        actual = 'brake'
-        guesses = ['roate', 'clung', 'wimps', 'drake']
+    elif len(args) >= 4 and args[1] == 'ph':
+        actual = args[2]
+        guesses = args[3:]
         posthoc_analysis(actual, guesses)
+    else:
+        print("Invoke with test, ai, or ph")
