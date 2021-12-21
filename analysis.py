@@ -139,12 +139,15 @@ def posthoc_analysis(actual, guesses):
 
         new_remaining = get_remaining(remaining, actual, guess)
 
-        if remaining != valid:
+        if len(remaining) < 300:
             # These are too slow to calculate for the first guess, with the full valid set
 
             guess_score = average_remaining(remaining, guess)
             print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
 
+            # TODO test how long it takes to run the averages, and offer to
+            #   skip, instead of hard-code 300
+            # TODO return the min/max from rust, to enable analysis of bigger data sets?
             algo_guesses = guess_averages(remaining, valid)
             best_algo_guess = min(algo_guesses, key=lambda guess: guess[1])
             worst_algo_guess = max(algo_guesses, key=lambda guess: guess[1])
