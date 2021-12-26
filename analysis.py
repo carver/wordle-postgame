@@ -128,11 +128,10 @@ def ai_play(actual):
         print(f"Trivial guess #{guess_count}: {remaining.pop()}")
 
 def posthoc_analysis(actual, guesses):
-    print(f"Post-hoc analysis of game with answer {actual!r}")
+    print(f"Post-hoc analysis of game with answer {actual!r}, with a dictionary size {len(valid)}")
 
     remaining = valid
     for idx, guess in enumerate(guesses):
-        print(f"After elimination, {len(remaining)} words remain")
 
         guess_count = idx + 1
         print(f"\nGuess #{guess_count}: {guess!r}")
@@ -155,8 +154,8 @@ def posthoc_analysis(actual, guesses):
             print(f"worst algo guess = {worst_algo_guess}")
 
         remaining = new_remaining
+        print(f"After elimination, {len(remaining)} words remain")
 
-    print(f"After elimination, {len(remaining)} words remain")
     if len(remaining) < 40:
         print(remaining)
 
