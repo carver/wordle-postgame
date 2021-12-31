@@ -156,8 +156,8 @@ def posthoc_analysis(actual, guesses):
         remaining = new_remaining
         print(f"After elimination, {len(remaining)} words remain")
 
-    if len(remaining) < 40:
-        print(remaining)
+        if len(remaining) < 40:
+            print("Specifically:", remaining)
 
 
 if __name__ == '__main__':
