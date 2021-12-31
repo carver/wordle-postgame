@@ -118,7 +118,7 @@ def ai_play(actual):
 
     while len(remaining) > 1:
         print(f"{len(remaining)} more words found")
-        guess, avg_remain = best_guess(remaining, valid)
+        guess, avg_remain = best_guess(remaining, remaining)
         guess_count += 1
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
         remaining = get_remaining(remaining, actual, guess)
@@ -147,7 +147,7 @@ def posthoc_analysis(actual, guesses):
             # TODO test how long it takes to run the averages, and offer to
             #   skip, instead of hard-code 300
             # TODO return the min/max from rust, to enable analysis of bigger data sets?
-            algo_guesses = guess_averages(remaining, valid)
+            algo_guesses = guess_averages(remaining, remaining)
             best_algo_guess = min(algo_guesses, key=lambda guess: guess[1])
             worst_algo_guess = max(algo_guesses, key=lambda guess: guess[1])
             print(f"best algo guess = {best_algo_guess}")
