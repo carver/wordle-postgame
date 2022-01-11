@@ -138,7 +138,9 @@ def posthoc_analysis(actual, guesses):
 
         new_remaining = get_remaining(remaining, actual, guess)
 
-        if len(remaining) < 300:
+        run_slow_calc = len(remaining) < 300
+
+        if run_slow_calc:
             # These are too slow to calculate for the first guess, with the full valid set
 
             guess_score = average_remaining(remaining, guess)
@@ -153,8 +155,20 @@ def posthoc_analysis(actual, guesses):
             print(f"best algo guess = {best_algo_guess}")
             print(f"worst algo guess = {worst_algo_guess}")
 
+        print(f"After elimination, {len(new_remaining)} words remain.", end=" ")
+
+        if run_slow_calc:
+            actual_left = len(new_remaining)
+            if actual_left < guess_score:
+                print(f"Got lucky by {guess_score/actual_left:.1f}x")
+            elif actual_left == guess_score:
+                print("Got exactly the expected luck")
+            else:
+                print(f"Got unlucky by {actual_left/guess_score:.1f}x")
+        else:
+            print("")
+
         remaining = new_remaining
-        print(f"After elimination, {len(remaining)} words remain")
 
         if len(remaining) < 40:
             print("Specifically:", remaining)
