@@ -122,6 +122,8 @@ def ai_play(actual):
         guess_count += 1
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
         remaining = get_remaining(remaining, actual, guess)
+        if len(remaining) < 40:
+            print("Specifically:", remaining)
 
     if len(remaining) == 1 and guess not in remaining:
         guess_count += 1
