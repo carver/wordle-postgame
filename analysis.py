@@ -138,11 +138,21 @@ def posthoc_analysis(actual, guesses):
 
         new_remaining = get_remaining(remaining, actual, guess)
 
-        do_guess_score = len(remaining) < 1200
-
-        if do_guess_score:
+        if idx == 0:
+            precalculated = {"roate": 431.1, "irate": 485.8}
+            if guess in precalculated:
+                guess_score = precalculated[guess]
+                print(
+                    f"At the time, the guess could be expected to leave {guess_score:.1f} words"
+                    " (using a precalculated score)"
+                )
+            else:
+                print(f"No precalculated score is available for the starting word {guess!r}")
+        elif len(remaining) < 1200:
             guess_score = average_remaining(remaining, guess)
             print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
+        else:
+            guess_score = None
 
         if len(remaining) < 300:
             # These are too slow to calculate for the first guess, with the full valid set
@@ -158,7 +168,7 @@ def posthoc_analysis(actual, guesses):
 
         print(f"After elimination, {len(new_remaining)} words remain.", end=" ")
 
-        if do_guess_score:
+        if guess_score is not None:
             actual_left = len(new_remaining)
             if actual_left < guess_score:
                 print(f"Got lucky by {guess_score/actual_left:.1f}x")
