@@ -138,13 +138,14 @@ def posthoc_analysis(actual, guesses):
 
         new_remaining = get_remaining(remaining, actual, guess)
 
-        run_slow_calc = len(remaining) < 300
+        do_guess_score = len(remaining) < 1200
 
-        if run_slow_calc:
-            # These are too slow to calculate for the first guess, with the full valid set
-
+        if do_guess_score:
             guess_score = average_remaining(remaining, guess)
             print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
+
+        if len(remaining) < 300:
+            # These are too slow to calculate for the first guess, with the full valid set
 
             # TODO test how long it takes to run the averages, and offer to
             #   skip, instead of hard-code 300
@@ -157,7 +158,7 @@ def posthoc_analysis(actual, guesses):
 
         print(f"After elimination, {len(new_remaining)} words remain.", end=" ")
 
-        if run_slow_calc:
+        if do_guess_score:
             actual_left = len(new_remaining)
             if actual_left < guess_score:
                 print(f"Got lucky by {guess_score/actual_left:.1f}x")
