@@ -130,6 +130,8 @@ def ai_play(actual):
 def posthoc_analysis(actual, guesses):
     print(f"Post-hoc analysis of game with answer {actual!r}, with a dictionary size {len(valid)}")
 
+    total_luck_score = 1.0
+
     remaining = valid
     for idx, guess in enumerate(guesses):
 
@@ -170,12 +172,14 @@ def posthoc_analysis(actual, guesses):
 
         if guess_score is not None:
             actual_left = len(new_remaining)
+            luck_score = guess_score / actual_left
+            total_luck_score *= luck_score
             if actual_left < guess_score:
-                print(f"Got lucky by {guess_score/actual_left:.1f}x")
+                print(f"Got lucky by {luck_score:.1f}x")
             elif actual_left == guess_score:
                 print("Got exactly the expected luck")
             else:
-                print(f"Got unlucky by {actual_left/guess_score:.1f}x")
+                print(f"Got unlucky by {1 / luck_score:.1f}x")
         else:
             print("")
 
@@ -183,6 +187,11 @@ def posthoc_analysis(actual, guesses):
 
         if len(remaining) < 40:
             print("Specifically:", remaining)
+
+    if total_luck_score > 1:
+        print(f"Lucky game, by: {total_luck_score:.1f}x")
+    else:
+        print(f"Unlucky game, by: {1 / total_luck_score:.1f}x")
 
 
 if __name__ == '__main__':
