@@ -158,7 +158,7 @@ def posthoc_analysis(actual, guesses):
         else:
             guess_score = None
 
-        if len(remaining) < 300:
+        if len(remaining) < 350:
             # These are too slow to calculate for the first guess, with the full valid set
 
             # TODO test how long it takes to run the averages, and offer to
@@ -187,7 +187,7 @@ def posthoc_analysis(actual, guesses):
 
         remaining = new_remaining
 
-        if len(remaining) < 40:
+        if len(remaining) < 50:
             print("Specifically:", remaining)
 
     if total_luck_score > 1:
