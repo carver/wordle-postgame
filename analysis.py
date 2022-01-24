@@ -1,6 +1,6 @@
 from collections import Counter, defaultdict
 
-from words import valid, answers
+from words import valid, answers, likely, unlikely
 
 def best_guess(possible_answers, possible_guesses):
     averages = guess_averages(possible_answers, possible_guesses)
@@ -114,7 +114,7 @@ def ai_play(actual):
     guess_count = 1
     first_guess = 'roate'
     print(f"Guess #{guess_count}: {first_guess!r}")
-    remaining = get_remaining(valid, actual, first_guess)
+    remaining = get_remaining(likely, actual, first_guess)
 
     while len(remaining) > 1:
         print(f"{len(remaining)} more words found")
@@ -134,7 +134,7 @@ def posthoc_analysis(actual, guesses):
 
     total_luck_score = 1.0
 
-    remaining = valid
+    remaining = likely
     for idx, guess in enumerate(guesses):
 
         guess_count = idx + 1
