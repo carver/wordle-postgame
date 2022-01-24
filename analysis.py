@@ -4,10 +4,11 @@ from words import valid, answers, likely, unlikely
 
 def best_guess(possible_answers, possible_guesses):
     averages = guess_averages(possible_answers, possible_guesses)
-    return min(averages, key=lambda guess: guess[1])
+    # score is the first element of the guess tuple, so we can just naively sort the results
+    return min(averages)
 
 def guess_averages(possible_answers, possible_guesses):
-    return [(guess, average_remaining(possible_answers, guess)) for guess in possible_guesses]
+    return [(average_remaining(possible_answers, guess), guess) for guess in possible_guesses]
 
 def average_remaining(possible_answers, guess):
     remaining = [calculate_remaining(possible_answers, answer, guess) for answer in possible_answers]
@@ -165,8 +166,8 @@ def posthoc_analysis(actual, guesses):
             #   skip, instead of hard-code 300
             # TODO return the min/max from rust, to enable analysis of bigger data sets?
             algo_guesses = guess_averages(remaining, remaining)
-            best_guess, best_score = min(algo_guesses, key=lambda guess: guess[1])
-            worst_guess, worst_score = max(algo_guesses, key=lambda guess: guess[1])
+            best_score, best_guess = min(algo_guesses)
+            worst_score, worst_guess = max(algo_guesses)
 
             # calculate skill score
             if guess_score is None:
