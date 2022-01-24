@@ -165,10 +165,31 @@ def posthoc_analysis(actual, guesses):
             #   skip, instead of hard-code 300
             # TODO return the min/max from rust, to enable analysis of bigger data sets?
             algo_guesses = guess_averages(remaining, remaining)
-            best_algo_guess = min(algo_guesses, key=lambda guess: guess[1])
-            worst_algo_guess = max(algo_guesses, key=lambda guess: guess[1])
-            print(f"best algo guess = {best_algo_guess}")
-            print(f"worst algo guess = {worst_algo_guess}")
+            best_guess, best_score = min(algo_guesses, key=lambda guess: guess[1])
+            worst_guess, worst_score = max(algo_guesses, key=lambda guess: guess[1])
+
+            # calculate skill score
+            if guess_score is None:
+                print("Can't calculate skill score if there's no guess score")
+            else:
+                # average word count that could have been reduced further by choosing best algo word
+                wasted_words = guess_score - best_score
+                # scale the waste to the score to guess a waste percentage
+                waste_fraction = wasted_words / guess_score
+                # invert in order to report the "happy stat"
+                skill_score = (1 - waste_fraction) * 10
+                print(f"Skill score: {skill_score:.1f}/10")
+
+                # where are you on the best/worst range
+                full_spectrum = (worst_score - best_score)
+                if full_spectrum:
+                    spectrum_percent = (worst_score - guess_score) / full_spectrum * 100
+                else:
+                    spectrum_percent = 100
+                print(f"Spectrum percent: {spectrum_percent:.1f}%")
+
+                print(f"   vs best {best_guess!r} at {best_score:.1f} word est.")
+                print(f"   vs worst {worst_guess!r} at {worst_score:.1f} word est.")
 
         print(f"After elimination, {len(new_remaining)} words remain.", end=" ")
 
