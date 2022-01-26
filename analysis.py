@@ -2,7 +2,7 @@ from collections import Counter, defaultdict
 
 from words import valid, answers, likely, unlikely
 
-def best_guess(possible_answers, possible_guesses):
+def select_best_guess(possible_answers, possible_guesses):
     averages = guess_averages(possible_answers, possible_guesses)
     # score is the first element of the guess tuple, so we can just naively sort the results
     return min(averages)
@@ -119,7 +119,7 @@ def ai_play(actual):
 
     while len(remaining) > 1:
         print(f"{len(remaining)} more words found")
-        guess, avg_remain = best_guess(remaining, remaining)
+        avg_remain, guess = select_best_guess(remaining, remaining)
         guess_count += 1
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
         remaining = get_remaining(remaining, actual, guess)
