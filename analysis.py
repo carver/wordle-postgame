@@ -233,8 +233,8 @@ if __name__ == '__main__':
     elif len(args) == 3 and args[1] == 'ai':
         ai_play(args[2])
     elif len(args) >= 4 and args[1] == 'ph':
-        actual = args[2]
-        guesses = args[3:]
+        guesses = args[2:]
+        actual = args[-1]
         posthoc_analysis(actual, guesses)
     else:
         print("Invoke with test, ai, or ph")
