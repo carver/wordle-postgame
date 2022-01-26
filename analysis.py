@@ -131,11 +131,11 @@ def ai_play(actual):
         print(f"Trivial guess #{guess_count}: {remaining.pop()}")
 
 def posthoc_analysis(actual, guesses):
-    print(f"Post-hoc analysis of game with answer {actual!r}, with a dictionary size {len(valid)}")
+    remaining = likely
+    print(f"Post-hoc analysis of game with answer {actual!r}, with a dictionary size {len(remaining)}")
 
     total_luck_score = 1.0
 
-    remaining = likely
     for idx, guess in enumerate(guesses):
 
         guess_count = idx + 1
