@@ -78,8 +78,11 @@ def get_remaining(candidate_answers, actual_answer, guess):
     filters = make_filters(actual_answer, guess)
     return apply_filters(candidate_answers, filters)
 
-def calculate_remaining(*args):
-    return len(get_remaining(*args))
+def calculate_remaining(possible_answers, answer, guess):
+    if guess == answer:
+        return 0
+    else:
+        return len(get_remaining(possible_answers, answer, guess))
 
 def top_positional_letters():
     # returns top_letters = [(0, 's'), (1, 'a'), (2, 'a'), (3, 'e'), (4, 's')]
@@ -178,13 +181,16 @@ def posthoc_analysis(actual, guesses):
             if guess_score is None:
                 print("Can't calculate skill score if there's no guess score")
             else:
-                # average word count that could have been reduced further by choosing best algo word
-                wasted_words = guess_score - best_score
-                # scale the waste to the score to guess a waste percentage
-                waste_fraction = wasted_words / guess_score
-                # invert in order to report the "happy stat"
-                skill_score = (1 - waste_fraction) * 10
-                print(f"Skill score: {skill_score:.1f}/10")
+                if guess_score == 0:
+                    print(f"Skill score: ∞/10")
+                else:
+                    # average word count that could be improved by choosing best algo word:
+                    wasted_words = guess_score - best_score
+                    # scale the waste to the score to guess a waste percentage
+                    waste_fraction = wasted_words / guess_score
+                    # invert in order to report the "happy stat"
+                    skill_score = (1 - waste_fraction) * 10
+                    print(f"Skill score: {skill_score:.1f}/10")
 
                 # where are you on the best/worst range
                 full_spectrum = (worst_score - best_score)
@@ -197,26 +203,33 @@ def posthoc_analysis(actual, guesses):
                 print(f"   vs best {best_guess!r} at {best_score:.1f} word est.")
                 print(f"   vs worst {worst_guess!r} at {worst_score:.1f} word est.")
 
-        print(f"After elimination, {len(new_remaining)} words remain.", end=" ")
+        if guess == actual:
+            print(f"Found the final word.", end=" ")
+        else:
+            print(f"After elimination, {len(new_remaining)} words remain.", end=" ")
 
         if guess_score is not None:
             actual_left = len(new_remaining)
             luck_score = guess_score / actual_left
-            total_luck_score *= luck_score
-            if actual_left < guess_score:
-                print(f"Got lucky by {luck_score:.1f}x")
-            elif actual_left == guess_score:
-                print("Got exactly the expected luck")
+            if guess_score == 0:
+                print("Used all skill, no luck")
             else:
-                print(f"Got unlucky by {1 / luck_score:.1f}x")
+                total_luck_score *= luck_score
+                if actual_left < guess_score:
+                    print(f"Got lucky by {luck_score:.1f}x")
+                elif actual_left == guess_score:
+                    print("Got exactly the expected luck")
+                else:
+                    print(f"Got unlucky by {1 / luck_score:.1f}x")
         else:
             print("")
 
         remaining = new_remaining
 
-        if len(remaining) < LIST_WORDS_UP_TO:
+        if len(remaining) < LIST_WORDS_UP_TO and guess != actual:
             print("Specifically:", remaining)
 
+    print("")
     if total_luck_score > 1:
         print(f"Lucky game, by: {total_luck_score:.1f}x")
     else:
