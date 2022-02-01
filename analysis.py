@@ -2,6 +2,11 @@ from collections import Counter, defaultdict
 
 from words import valid, answers, likely, unlikely
 
+
+SCORE_UP_TO_SIZE = 432
+LIST_WORDS_UP_TO = 110
+
+
 def select_best_guess(possible_answers, possible_guesses):
     averages = guess_averages(possible_answers, possible_guesses)
     # score is the first element of the guess tuple, so we can just naively sort the results
@@ -123,7 +128,7 @@ def ai_play(actual):
         guess_count += 1
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
         remaining = get_remaining(remaining, actual, guess)
-        if len(remaining) < 40:
+        if len(remaining) < LIST_WORDS_UP_TO:
             print("Specifically:", remaining)
 
     if len(remaining) == 1 and guess not in remaining:
@@ -159,7 +164,7 @@ def posthoc_analysis(actual, guesses):
         else:
             guess_score = None
 
-        if len(remaining) < 350:
+        if len(remaining) < SCORE_UP_TO_SIZE:
             # These are too slow to calculate for the first guess, with the full valid set
 
             # TODO test how long it takes to run the averages, and offer to
@@ -209,7 +214,7 @@ def posthoc_analysis(actual, guesses):
 
         remaining = new_remaining
 
-        if len(remaining) < 50:
+        if len(remaining) < LIST_WORDS_UP_TO:
             print("Specifically:", remaining)
 
     if total_luck_score > 1:
