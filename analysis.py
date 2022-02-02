@@ -171,7 +171,7 @@ def posthoc_analysis(actual, guesses):
         else:
             guess_score = None
 
-        if len(remaining) < SCORE_UP_TO_SIZE:
+        if 1 < len(remaining) < SCORE_UP_TO_SIZE:
 
             # TODO test how long it takes to run the averages, and offer to
             #   skip, instead of hard-code 300
