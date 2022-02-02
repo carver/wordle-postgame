@@ -3,6 +3,10 @@ from collections import Counter, defaultdict
 from words import valid, answers, likely, unlikely
 
 
+# Consider using any word in the dictionary (ie~ "easy mode") when this many words are remaining in
+# the valid set (or fewer). Otherwise, use hard mode.
+CONSIDER_ALL_WORDS_MAXIMUM = 30
+
 SCORE_UP_TO_SIZE = 432
 LIST_WORDS_UP_TO = 110
 
@@ -168,12 +172,16 @@ def posthoc_analysis(actual, guesses):
             guess_score = None
 
         if len(remaining) < SCORE_UP_TO_SIZE:
-            # These are too slow to calculate for the first guess, with the full valid set
 
             # TODO test how long it takes to run the averages, and offer to
             #   skip, instead of hard-code 300
             # TODO return the min/max from rust, to enable analysis of bigger data sets?
-            algo_guesses = guess_averages(remaining, remaining)
+            if len(remaining) > CONSIDER_ALL_WORDS_MAXIMUM:
+                guess_choices = remaining
+            else:
+                guess_choices = likely
+
+            algo_guesses = guess_averages(remaining, guess_choices)
             best_score, best_guess = min(algo_guesses)
             worst_score, worst_guess = max(algo_guesses)
 
