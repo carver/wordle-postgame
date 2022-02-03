@@ -237,7 +237,7 @@ def posthoc_analysis(actual, guesses):
         remaining = new_remaining
 
         if len(remaining) < LIST_WORDS_UP_TO and guess != actual:
-            print("Specifically:", remaining)
+            print("Specifically:", list(sorted(remaining)))
 
     print("")
     if total_luck_score > 1:
