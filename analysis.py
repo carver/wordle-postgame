@@ -131,7 +131,11 @@ def ai_play(actual):
 
     while len(remaining) > 1:
         print(f"{len(remaining)} more words found")
-        avg_remain, guess = select_best_guess(remaining, remaining)
+        if len(remaining) > CONSIDER_ALL_WORDS_MAXIMUM:
+            guess_choices = remaining
+        else:
+            guess_choices = likely
+        avg_remain, guess = select_best_guess(remaining, guess_choices)
         guess_count += 1
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
         remaining = get_remaining(remaining, actual, guess)
