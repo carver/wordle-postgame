@@ -181,13 +181,20 @@ def posthoc_analysis(actual, guesses):
             #   skip, instead of hard-code 300
             # TODO return the min/max from rust, to enable analysis of bigger data sets?
             if len(remaining) > CONSIDER_ALL_WORDS_MAXIMUM:
-                guess_choices = remaining
+                all_algo_guesses = None
+                valid_algo_guesses = guess_averages(remaining, remaining)
             else:
-                guess_choices = likely
+                all_algo_guesses = guess_averages(remaining, likely)
+                easy_best_score, easy_best_guess = min(all_algo_guesses)
 
-            algo_guesses = guess_averages(remaining, guess_choices)
-            best_score, best_guess = min(algo_guesses)
-            worst_score, worst_guess = max(algo_guesses)
+                valid_algo_guesses = [
+                    (score, word)
+                    for score, word in all_algo_guesses
+                    if word in remaining
+                ]
+
+            best_score, best_guess = min(valid_algo_guesses)
+            worst_score, worst_guess = max(valid_algo_guesses)
 
             # calculate skill score
             if guess_score is None:
@@ -204,6 +211,12 @@ def posthoc_analysis(actual, guesses):
                     skill_score = (1 - waste_fraction) * 10
                     print(f"Skill score: {skill_score:.1f}/10")
 
+                    if all_algo_guesses is not None:
+                        easy_wasted_words = guess_score - easy_best_score
+                        easy_waste_fraction = easy_wasted_words / guess_score
+                        easy_skill_score = (1 - easy_waste_fraction) * 10
+                        print(f"Skill score (easy mode): {easy_skill_score:.1f}/10")
+
                 # where are you on the best/worst range
                 full_spectrum = (worst_score - best_score)
                 if full_spectrum:
@@ -212,6 +225,8 @@ def posthoc_analysis(actual, guesses):
                     spectrum_percent = 100
                 print(f"Spectrum percent: {spectrum_percent:.1f}%")
 
+                if all_algo_guesses is not None:
+                    print(f"   vs best {easy_best_guess!r} (easy) at {easy_best_score:.1f} word est.")
                 print(f"   vs best {best_guess!r} at {best_score:.1f} word est.")
                 print(f"   vs worst {worst_guess!r} at {worst_score:.1f} word est.")
 
