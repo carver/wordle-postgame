@@ -114,7 +114,6 @@ compt
  potoo
 bothy
  jotun
-moult
 noint
 boult
  ootid
@@ -182,7 +181,6 @@ fixit
 nicht
 pight
 licht
-wight
 micht
 dicht
 dight

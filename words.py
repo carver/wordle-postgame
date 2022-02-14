@@ -4,4 +4,8 @@ valid = non_answers.union(answers)
 with open('unlikely_words.txt') as f:
     unlikely = set([w.strip() for w in f.readlines()])
 
+answers_unlikely = unlikely.intersection(answers)
+if answers_unlikely:
+    print(f"OOPS, added an actual answer to the unlikely list: {answers_unlikely!r}")
+
 likely = valid.difference(unlikely)
