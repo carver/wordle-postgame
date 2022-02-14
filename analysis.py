@@ -160,7 +160,7 @@ def posthoc_analysis(actual, guesses):
         new_remaining = get_remaining(remaining, actual, guess)
 
         if idx == 0:
-            precalculated = {"roate": 431.1, "irate": 485.8}
+            precalculated = {"roate": 193.9, "irate": 213.1, "crane": 271.2}
             if guess in precalculated:
                 guess_score = precalculated[guess]
                 print(

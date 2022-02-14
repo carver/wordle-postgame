@@ -8,4 +8,22 @@ answers_unlikely = unlikely.intersection(answers)
 if answers_unlikely:
     print(f"OOPS, added an actual answer to the unlikely list: {answers_unlikely!r}")
 
-likely = valid.difference(unlikely)
+not_unlikely = valid.difference(unlikely)
+
+# File formed by:
+# 0. Watch this video and be inspired:
+#   - https://www.3blue1brown.com/lessons/wordle
+# 1. Download these:
+#   - https://github.com/3b1b/videos/raw/5229669d65ce6940e5c696c15344bc75fda00705/_2022/wordle/data/long_freqs.txt
+#   - https://raw.githubusercontent.com/3b1b/videos/5229669d65ce6940e5c696c15344bc75fda00705/_2022/wordle/data/short_freqs.txt
+# 2. Grab least frequent word that's actually an answer (without peeking)
+#   $ cat short_freqs.txt | awk ' { print $2; } ' | sort -n | head -1
+# 3. Find line number of least frequent answer in combined set by searching for frequency here:
+#   $ cat short_freqs.txt long_freqs.txt | awk ' { print $2; } ' | sort -nr | less -N
+#   (The answer is the top 6641 words, by frequency)
+# 4. Create combined word list with all less-frequent words clipped.
+#    This seems to be fairly (overly?) permissive with quite unusual words.
+#   $ cat short_freqs.txt long_freqs.txt | awk ' { print $2, $1; } ' | sort -nr | head -6641 | awk '{ print $2}' | sort >as_likely_as_answers.txt
+with open('as_likely_as_answers.txt') as f:
+    likely_inferred = set([w.strip() for w in f.readlines()])
+    likely = likely_inferred.difference(unlikely)
