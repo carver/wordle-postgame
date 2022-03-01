@@ -21,7 +21,10 @@ def guess_averages(possible_answers, possible_guesses):
 
 def average_remaining(possible_answers, guess):
     remaining = [calculate_remaining(possible_answers, answer, guess) for answer in possible_answers]
-    return sum(remaining) / len(remaining)
+    if remaining:
+        return sum(remaining) / len(remaining)
+    else:
+        return 0
 
 def filter_exact(index, letter):
     return lambda word: word[index] == letter
@@ -79,8 +82,11 @@ def apply_filters(candidate_answers, filters):
     return set(filter(joined_filter, candidate_answers))
 
 def get_remaining(candidate_answers, actual_answer, guess):
-    filters = make_filters(actual_answer, guess)
-    return apply_filters(candidate_answers, filters)
+    if guess == actual_answer:
+        return set()
+    else:
+        filters = make_filters(actual_answer, guess)
+        return apply_filters(candidate_answers, filters)
 
 def calculate_remaining(possible_answers, answer, guess):
     if guess == answer:
@@ -145,6 +151,38 @@ def ai_play(actual):
     if len(remaining) == 1 and guess not in remaining:
         guess_count += 1
         print(f"Trivial guess #{guess_count}: {remaining.pop()}")
+
+
+def quardle_ai_play(actuals):
+    guess_count = 1
+    first_guess = 'tears'
+    print(f"Guess #{guess_count}: {first_guess!r}")
+    remainings = [
+        get_remaining(likely, actual, first_guess)
+        for actual in actuals
+    ]
+
+    while any(remainings):
+        print(f"{[len(r) for r in remainings]!r} more words found")
+        if sum(len(r) for r in remainings) > CONSIDER_ALL_WORDS_MAXIMUM:
+            guess_choices = set(guess for remaining in remainings for guess in remaining)
+        else:
+            guess_choices = likely
+
+        options = [
+            (sum(average_remaining(r, guess) for r in remainings), guess)
+            for guess in guess_choices
+        ]
+        avg_remain, guess = min(options)
+        guess_count += 1
+        print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
+        remainings = [
+            get_remaining(old_remaining, actual, guess)
+            for old_remaining, actual in zip(remainings, actuals)
+        ]
+        if sum(len(r) for r in remainings) < LIST_WORDS_UP_TO:
+            print(f"Specifically: {remainings!r}")
+
 
 def posthoc_analysis(actual, guesses):
     remaining = likely
@@ -287,5 +325,7 @@ if __name__ == '__main__':
         guesses = args[2:]
         actual = args[-1]
         posthoc_analysis(actual, guesses)
+    elif len(args) == 6 and args[1] == 'qai':
+        quardle_ai_play(args[2:6])
     else:
         print("Invoke with test, ai, or ph")
