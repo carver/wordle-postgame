@@ -125,7 +125,7 @@ def most_positional_letters():
 
 def ai_play(actual):
     guess_count = 1
-    first_guess = 'roate'
+    first_guess = 'tears'
     print(f"Guess #{guess_count}: {first_guess!r}")
     remaining = get_remaining(likely, actual, first_guess)
 
@@ -160,7 +160,15 @@ def posthoc_analysis(actual, guesses):
         new_remaining = get_remaining(remaining, actual, guess)
 
         if idx == 0:
-            precalculated = {"roate": 193.9, "irate": 213.1, "crane": 271.2}
+            precalculated = {
+                "tears": 157.1,
+                "raise": 159.0,
+                "slate": 167.9,
+                "roate": 192.7,
+                "later": 193.6,
+                "irate": 211.4,
+                "crane": 269.6,
+            }
             if guess in precalculated:
                 guess_score = precalculated[guess]
                 print(
