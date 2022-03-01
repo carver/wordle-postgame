@@ -283,15 +283,17 @@ def posthoc_analysis(actual, guesses):
 
         if guess_score is not None:
             actual_left = len(new_remaining)
-            score_with_answer = (guess_score + 1)
-            luck_score = score_with_answer / actual_left
-            total_luck_score *= luck_score
-            if actual_left < score_with_answer:
-                print(f"Got lucky by {luck_score:.1f}x")
-            elif actual_left == score_with_answer:
+            if actual_left == guess_score:
                 print("Got exactly the expected luck")
             else:
-                print(f"Got unlucky by {1 / luck_score:.1f}x")
+                actual_left_with_answer = (actual_left + 1)
+                score_with_answer = (guess_score + 1)
+                luck_score = score_with_answer / actual_left_with_answer
+                total_luck_score *= luck_score
+                if actual_left_with_answer < score_with_answer:
+                    print(f"Got lucky by {luck_score:.1f}x")
+                else:
+                    print(f"Got unlucky by {1 / luck_score:.1f}x")
         else:
             print("")
 
