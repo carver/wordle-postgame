@@ -153,7 +153,7 @@ def ai_play(actual):
         print(f"Trivial guess #{guess_count}: {remaining.pop()}")
 
 
-def quardle_ai_play(actuals):
+def multi_answer_ai_play(actuals):
     guess_count = 1
     first_guess = 'tears'
     print(f"Guess #{guess_count}: {first_guess!r}")
@@ -163,9 +163,10 @@ def quardle_ai_play(actuals):
     ]
 
     while any(remainings):
-        print(f"{[len(r) for r in remainings]!r} more words found")
+        unique_remaining = set(guess for remaining in remainings for guess in remaining)
+        print(f"{[len(r) for r in remainings]!r} more words found ({len(unique_remaining)} unique)")
         if sum(len(r) for r in remainings) > CONSIDER_ALL_WORDS_MAXIMUM:
-            guess_choices = set(guess for remaining in remainings for guess in remaining)
+            guess_choices = unique_remaining
         else:
             guess_choices = likely
 
@@ -327,7 +328,7 @@ if __name__ == '__main__':
         guesses = args[2:]
         actual = args[-1]
         posthoc_analysis(actual, guesses)
-    elif len(args) == 6 and args[1] == 'qai':
-        quardle_ai_play(args[2:6])
+    elif len(args) > 3 and args[1] == 'mai':
+        multi_answer_ai_play(args[2:])
     else:
-        print("Invoke with test, ai, or ph")
+        print("Invoke with test, ai, mai (2+ answers), or ph")
