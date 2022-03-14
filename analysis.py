@@ -208,13 +208,23 @@ def posthoc_analysis(actual, guesses):
 
         if idx == 0:
             precalculated = {
-                "tears": 157.1,
+                "lares": 127.8,
+                "rales": 129.6,
+                "tares": 135.0,
+                "reals": 143.5,
+                "tears": 156.1,
                 "raise": 159.0,
+                "stare": 164.2,
                 "slate": 167.9,
                 "roate": 192.7,
                 "later": 193.6,
                 "irate": 211.4,
+                "trios": 224.2,
                 "crane": 269.6,
+                "trial": 273.0,
+                "erase": 277.1,
+                "triad": 310.1,
+                "count": 574.2,
             }
             if guess in precalculated:
                 guess_score = precalculated[guess]
@@ -223,7 +233,9 @@ def posthoc_analysis(actual, guesses):
                     " (using a precalculated score)"
                 )
             else:
-                print(f"No precalculated score is available for the starting word {guess!r}")
+                print(f"No precalculated score is available for the starting word {guess!r}. Calculating...")
+                guess_score = average_remaining(remaining, guess)
+                print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
         elif len(remaining) < 1200:
             guess_score = average_remaining(remaining, guess)
             print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
