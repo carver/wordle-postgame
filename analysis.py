@@ -1,4 +1,5 @@
 from collections import Counter, defaultdict
+from functools import lru_cache
 
 from words import valid, answers, likely, unlikely
 
@@ -17,10 +18,12 @@ def select_best_guess(possible_answers, possible_guesses):
     return min(averages)
 
 def guess_averages(possible_answers, possible_guesses):
-    return [(average_remaining(possible_answers, guess), guess) for guess in possible_guesses]
+    frozen_answers = frozenset(possible_answers)
+    return [(average_remaining(frozen_answers, guess), guess) for guess in possible_guesses]
 
 def average_remaining(possible_answers, guess):
-    remaining = [calculate_remaining(possible_answers, answer, guess) for answer in possible_answers]
+    frozen_answers = frozenset(possible_answers)
+    remaining = [calculate_remaining(frozen_answers, answer, guess) for answer in possible_answers]
     if remaining:
         return sum(remaining) / len(remaining)
     else:
@@ -43,8 +46,9 @@ def filter_eliminated(letter):
 
 def filter_intersection(filters):
     def joined_filter(element):
-        for f in filters:
-            if not f(element):
+        for f, *args in filters:
+            curried = f(*args)
+            if not curried(element):
                 return False
         return True
     return joined_filter
@@ -59,24 +63,25 @@ def make_filters(actual_answer, guess):
 
             if actual_answer[idx] == guess[idx]:
                 # Found letter in correct position
-                filters.append(filter_exact(idx, letter))
+                filters.append((filter_exact, idx, letter))
             else:
                 # Know that letter is *not* in this position
-                filters.append(filter_letter_elsewhere(idx, letter))
+                filters.append((filter_letter_elsewhere, idx, letter))
 
             # Handle letter count, whether or not position was correct
             # For example, what if this was the 2nd repeat letter in correct
             # position, but the first was found out of place?
             if guessed_count[letter] <= letter_count[letter]:
-                filters.append(filter_min_count(letter, guessed_count[letter]))
+                filters.append((filter_min_count, letter, guessed_count[letter]))
             else:
-                filters.append(filter_exact_count(letter, letter_count[letter]))
+                filters.append((filter_exact_count, letter, letter_count[letter]))
         else:
             # Discovered that letter is not in word
-            filters.append(filter_eliminated(letter))
+            filters.append((filter_eliminated, letter))
 
-    return filters
+    return tuple(filters)
 
+@lru_cache(maxsize=2500)
 def apply_filters(candidate_answers, filters):
     joined_filter = filter_intersection(filters)
     return set(filter(joined_filter, candidate_answers))
@@ -86,7 +91,7 @@ def get_remaining(candidate_answers, actual_answer, guess):
         return set()
     else:
         filters = make_filters(actual_answer, guess)
-        return apply_filters(candidate_answers, filters)
+        return apply_filters(frozenset(candidate_answers), filters)
 
 def calculate_remaining(possible_answers, answer, guess):
     if guess == answer:
@@ -133,7 +138,7 @@ def ai_play(actual):
     guess_count = 1
     first_guess = 'tears'
     print(f"Guess #{guess_count}: {first_guess!r}")
-    remaining = get_remaining(likely, actual, first_guess)
+    remaining = get_remaining(frozenset(likely), actual, first_guess)
 
     while len(remaining) > 1:
         print(f"{len(remaining)} more words found")
@@ -144,7 +149,8 @@ def ai_play(actual):
         avg_remain, guess = select_best_guess(remaining, guess_choices)
         guess_count += 1
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
-        remaining = get_remaining(remaining, actual, guess)
+        frozen_remaining = frozenset(remaining)
+        remaining = get_remaining(frozen_remaining, actual, guess)
         if len(remaining) < LIST_WORDS_UP_TO:
             print("Specifically:", remaining)
 
@@ -186,7 +192,7 @@ def multi_answer_ai_play(actuals):
 
 
 def posthoc_analysis(actual, guesses):
-    remaining = likely
+    remaining = frozenset(likely)
     print(f"Post-hoc analysis of game with answer {actual!r}, with a dictionary size {len(remaining)}")
 
     total_luck_score = 1.0
@@ -298,7 +304,7 @@ def posthoc_analysis(actual, guesses):
         else:
             print("")
 
-        remaining = new_remaining
+        remaining = frozenset(new_remaining)
 
         if len(remaining) < LIST_WORDS_UP_TO and guess != actual:
             print("Specifically:", list(sorted(remaining)))
