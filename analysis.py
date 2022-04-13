@@ -11,6 +11,8 @@ CONSIDER_ALL_WORDS_MAXIMUM = 30
 SCORE_UP_TO_SIZE = 432
 LIST_WORDS_UP_TO = 110
 
+STARTING_WORD = 'rales'
+
 
 def select_best_guess(possible_answers, possible_guesses):
     averages = guess_averages(possible_answers, possible_guesses)
@@ -136,7 +138,7 @@ def most_positional_letters():
 
 def ai_play(actual):
     guess_count = 1
-    first_guess = 'tears'
+    first_guess = STARTING_WORD
     print(f"Guess #{guess_count}: {first_guess!r}")
     remaining = get_remaining(frozenset(likely), actual, first_guess)
 
@@ -161,7 +163,7 @@ def ai_play(actual):
 
 def multi_answer_ai_play(actuals):
     guess_count = 1
-    first_guess = 'tears'
+    first_guess = STARTING_WORD
     print(f"Guess #{guess_count}: {first_guess!r}")
     remainings = [
         get_remaining(likely, actual, first_guess)
