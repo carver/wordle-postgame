@@ -347,6 +347,13 @@ def posthoc_analysis(actual, guesses):
         print(f"Unlucky game, by: {1 / total_luck_score:.1f}x")
 
 
+def to_words(raw):
+    lowercase_words = [w.lower() for w in raw]
+    if any(len(w) != 5 for w in lowercase_words):
+        raise ValueError("Words must all be 5 letters")
+    return lowercase_words
+
+
 # Notes:
 #   - rales
 #       - no hits, best guess: tonic
@@ -390,10 +397,11 @@ if __name__ == '__main__':
     elif len(args) == 3 and args[1] == 'ai':
         ai_play(args[2])
     elif len(args) >= 4 and args[1] == 'ph':
-        guesses = args[2:]
-        actual = args[-1]
+        guesses = to_words(args[2:])
+        actual = guesses[-1]
         posthoc_analysis(actual, guesses)
     elif len(args) > 3 and args[1] == 'mai':
-        multi_answer_ai_play(args[2:])
+        answers = to_words(args[2:])
+        multi_answer_ai_play(answers)
     else:
         print("Invoke with test, ai, mai (2+ answers), or ph")
