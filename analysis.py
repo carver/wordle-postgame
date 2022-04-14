@@ -162,6 +162,7 @@ def ai_play(actual):
 
 
 def multi_answer_ai_play(actuals):
+    print(f"AI about to play game with {len(actuals)} words...")
     guess_count = 1
     first_guess = STARTING_WORD
     print(f"Guess #{guess_count}: {first_guess!r}")
@@ -172,16 +173,32 @@ def multi_answer_ai_play(actuals):
 
     while any(remainings):
         unique_remaining = set(guess for remaining in remainings for guess in remaining)
-        print(f"{[len(r) for r in remainings]!r} more words found ({len(unique_remaining)} unique)")
-        if sum(len(r) for r in remainings) > CONSIDER_ALL_WORDS_MAXIMUM:
-            guess_choices = unique_remaining
-        else:
-            guess_choices = likely
+        num_remainings = [len(r) for r in remainings]
+        print(f"{num_remainings!r} more words found ({len(unique_remaining)} unique)")
 
-        options = [
-            (sum(average_remaining(r, guess) for r in remainings), guess)
-            for guess in guess_choices
-        ]
+        # special case, if any single choices are left, do those first, because
+        #   it will be necessary by the end and might provide clues about the others
+        if 1 in num_remainings:
+            for remaining in remainings:
+                if len(remaining) == 1:
+                    guess = list(remaining)[0]
+                    options = [
+                        (sum(average_remaining(r, guess) for r in remainings), guess)
+                    ]
+                    break
+            else:
+                raise Exception(f"Couldn't find the winner in {remainings!r}")
+        else:
+            if sum(len(r) for r in remainings) > CONSIDER_ALL_WORDS_MAXIMUM:
+                guess_choices = unique_remaining
+            else:
+                guess_choices = likely
+
+            options = [
+                (sum(average_remaining(r, guess) for r in remainings), guess)
+                for guess in guess_choices
+            ]
+
         avg_remain, guess = min(options)
         guess_count += 1
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
