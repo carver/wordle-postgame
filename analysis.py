@@ -347,6 +347,34 @@ def posthoc_analysis(actual, guesses):
         print(f"Unlucky game, by: {1 / total_luck_score:.1f}x")
 
 
+# Notes:
+#   - rales
+#       - no hits, best guess: tonic
+#       - green s: tunic
+#       - yellow e: tonic
+#       - yellow a: tonic
+#       - yellow r: count
+#       - green e: donut
+#       - yellow s: point
+#       - green es: divot
+#       - yellow re: trice
+#       - green e, yellow r: divot
+#       - green a: minty
+#       - yellow ra: train
+#       - yellow l: count
+#       - yellow es: point
+#       - green s, yellow e: spent
+#       - yellow al: point
+#       - yellow ae: meant
+#       - green as: tunic
+#       - yellow le: toile
+#       - green s, yellow r: donut
+#       - green s, yellow a: tonic (really coati)
+#       - green s, yellow l: lotic
+#       - yellow als: chant (easy), shalt (hard)
+#       - yellow ras: staph (easy), strap (hard)
+#       - yellow as: chant (easy),
+
 if __name__ == '__main__':
     import sys
     args = sys.argv
