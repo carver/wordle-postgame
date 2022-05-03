@@ -1,5 +1,6 @@
 from collections import Counter, defaultdict
 from functools import lru_cache
+import string
 
 from words import valid, answers, likely, unlikely
 
@@ -348,7 +349,8 @@ def posthoc_analysis(actual, guesses):
 
 
 def to_words(raw):
-    lowercase_words = [w.lower() for w in raw]
+    lowercase_args = [w.lower() for w in raw]
+    lowercase_words = [''.join(l for l in w if l in string.ascii_lowercase) for w in lowercase_args]
     if any(len(w) != 5 for w in lowercase_words):
         raise ValueError("Words must all be 5 letters")
     return lowercase_words
