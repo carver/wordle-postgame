@@ -306,8 +306,10 @@ def posthoc_analysis(actual, guesses):
                 full_spectrum = (worst_score - best_score)
                 if full_spectrum:
                     spectrum_percent = (worst_score - guess_score) / full_spectrum * 100
-                else:
+                elif guess_score <= best_score:
                     spectrum_percent = 100
+                else:
+                    spectrum_percent = 0
                 print(f"Spectrum percent: {spectrum_percent:.1f}%")
 
                 if all_algo_guesses is not None:
