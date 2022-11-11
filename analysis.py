@@ -403,7 +403,10 @@ if __name__ == '__main__':
     elif len(args) >= 4 and args[1] == 'ph':
         guesses = to_words(args[2:])
         actual = guesses[-1]
-        posthoc_analysis(actual, guesses)
+        try:
+            posthoc_analysis(actual, guesses)
+        except KeyboardInterrupt:
+            print("\nAnalysis ended by Ctrl-C")
     elif len(args) > 3 and args[1] == 'mai':
         answers = to_words(args[2:])
         multi_answer_ai_play(answers)
