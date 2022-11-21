@@ -366,32 +366,91 @@ def to_words(raw):
 
 
 # Notes:
-#   - rales
-#       - no hits, best guess: tonic
-#       - green s: tunic
-#       - yellow e: tonic
-#       - yellow a: tonic
-#       - yellow r: count
-#       - green e: donut
-#       - yellow s: point
-#       - green es: divot
-#       - yellow re: trice
-#       - green e, yellow r: divot
-#       - green a: minty
-#       - yellow ra: train
-#       - yellow l: count
-#       - yellow es: point
-#       - green s, yellow e: spent
-#       - yellow al: point
-#       - yellow ae: meant
-#       - green as: tunic
-#       - yellow le: toile
-#       - green s, yellow r: donut
-#       - green s, yellow a: tonic (really coati)
-#       - green s, yellow l: lotic
-#       - yellow als: chant (easy), shalt (hard)
-#       - yellow ras: staph (easy), strap (hard)
-#       - yellow as: chant (easy),
+#       key:
+#           - n: letter in rales is gray, when guessing
+#           - y: letter in rales is yellow, when guessing
+#           - g: letter in rales is green, when guessing
+#   - rales, best 2nd guesses
+#       - nnnng: tunic
+#       - nnnng: tunic
+#       - nnngg: divot
+#       - ngnng: tunic
+#       - nnyng: lotic
+#
+#       - nnngn: donut 12.2
+#       - ngngn: twang 12
+#       - ynngn: divot 11.9
+#       - nnnnn: tonic 10.0
+#       - ynnyn: toric 7.8 (formerly trice)
+#       - nynng: tonic 7.8
+#       - nnnyg: dents 7.3
+#       - ngnnn: minty 6.7
+#       - ygngn: typed 6.6
+#       - nnnyn: tonic 6.5
+#       - yynnn: train 6.4
+#       - ynnng: doubt 6.3
+#       - yynyn: trace 5.2 (both)
+#       - nnygn: divot 6.0
+#       - nynyn: meant 6.0 (both)
+#       - ynnnn: count 5.7
+#       - nyyng: comfy 5.4
+#       - nyynn: point 5.2
+#       - nnnny: point 5.0
+#       - nyyyn: plate 4.7 (both)
+#       - nnynn: count 4.4
+#       - nynnn: tonic 4.3
+#       - nnyyn: toile 4.2
+#       - nynny: chant 4.0
+#       - nnngy: point 4.0
+#       - nngnn: goyim 3.9
+#       - nynyy: staph 3.8
+#       - ynngy: thrip 3.7
+#       - ynnyy: spout 3.3
+#       - yynny: staph 3.3
+#       - ngnny: synth 3.2
+#       - nnyny: shill 3.1 (both)
+#       - ynygn: logic 2.5
+#       - nnnyy: point 3.0
+#       - nygnn: yogic 2.9
+#       - ngynn: minty 2.8
+#       - ygnnn: topic 2.8
+#       - nngyn: toile 2.7
+#       - ynynn: would 2.6
+#       - nggnn: minty 2.6
+#       - nyyny: chant 2.6
+#       - gnnyn: cutie 2.5
+#       - gynyn: pecan 2.5
+#       - ynnny: spout 2.4
+#       - yyynn: tidal 2.4
+#       - nnyyy: spelt 2.4
+#       - yyngn: grind 2.3
+#       - ngygn: lynch 2.3
+#       - gnngn: bipod 2.2
+#       - ngnyn: cuing 2.1
+#       - ngyyn: batch 1.8
+#       - yynyy: staph 1.8
+#       - nnggn: doubt 1.8
+#       - ngnyy: thump 1.8
+#       - nyyyy: shalt 1.8
+#       - gnnnn: donut 1.6
+#       - yyyyn: began 1.5
+#       - ggnnn: bodhi 1.4
+#       - nggny: noisy 1.4
+#       - ygnyn: cadre 1.1
+#       - nngny: fitly 1.0
+#       - nyngy: depth 1.0
+#       - gngyn: actin 1.0
+#       - nnygy: adept 1.0
+#       - ygnny: habit 1.0
+#       - ynyyn: lemur 0.8
+#       - nygyn: delay 0.8
+#       - ynyyn: lemur 0.8
+#       - ngggn: baled 0.7
+#       - ygynn: carol 0.7
+#       - gyyyn: regal 0.7
+#       - nyggn: abled 0.7
+#       - nyygn: angel 0.5
+#       - yygny: solar 0.0
 
 if __name__ == '__main__':
     import sys
