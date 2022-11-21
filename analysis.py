@@ -154,7 +154,7 @@ def ai_play(actual):
         print(f"Guess #{guess_count}: {guess!r}, with estimated {avg_remain:.1f} remaining")
         frozen_remaining = frozenset(remaining)
         remaining = get_remaining(frozen_remaining, actual, guess)
-        if len(remaining) < LIST_WORDS_UP_TO:
+        if 0 < len(remaining) < LIST_WORDS_UP_TO:
             print("Specifically:", remaining)
 
     if len(remaining) == 1 and guess not in remaining:
