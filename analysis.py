@@ -225,23 +225,30 @@ def posthoc_analysis(actual, guesses):
         new_remaining = get_remaining(remaining, actual, guess)
 
         if idx == 0:
+            # roate seemed the best, when looking only at the answer list, but that seems like
+            # cheating.
             precalculated = {
-                "lares": 127.8,
-                "rales": 129.6,
-                "tares": 135.0,
-                "reals": 143.5,
-                "tears": 156.1,
-                "raise": 159.0,
-                "stare": 164.2,
-                "slate": 167.9,
-                "roate": 192.7,
-                "later": 193.6,
-                "irate": 211.4,
+                "rales": 119.1,
+                "tares": 123.5,
+                "reals": 134.2,
+                "tears": 141.4,
+                "raise": 145.0,
+                "slate": 152.6,
+                "stare": 159.3,
+                "stale": 164.1,
+                "arise": 164.3,
+                "least": 172.0,
+                "later": 177.2,
+                "irate": 195.2,
+                "slant": 215.2,
                 "trios": 224.2,
-                "crane": 269.6,
+                "crate": 234.2,
+                "react": 234.6,
+                "trace": 238.5,
+                "crane": 246.4,
                 "trial": 273.0,
                 "erase": 277.1,
-                "triad": 310.1,
+                "triad": 283.3,
                 "count": 574.2,
             }
             if guess in precalculated:
