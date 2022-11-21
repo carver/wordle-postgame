@@ -458,7 +458,7 @@ if __name__ == '__main__':
     if len(args) > 1 and args[1] == 'test':
         assert calculate_remaining(["aoeuh"], "aoeuh", "") == 1
         assert calculate_remaining(["ab"], "ab", "ac") == 1  # Catch a bad closure
-        assert calculate_remaining(["aoeuh"], "aoeuh", "aoeuh") == 1
+        assert calculate_remaining(["aoeuh"], "aoeuh", "aoeuh") == 0  # 0 remain on a correct guess
         assert calculate_remaining(["aoeuh"], "aoeuh", "tnsgc") == 1
         assert calculate_remaining(["aoeuh"], "aoeuh", "hueoa") == 1
         assert calculate_remaining(["baa", "bac"], "baa", "aab") == 1  # Catch a bad closure
