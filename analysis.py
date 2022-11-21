@@ -7,10 +7,10 @@ from words import valid, answers, likely, unlikely
 
 # Consider using any word in the dictionary (ie~ "easy mode") when this many words are remaining in
 # the valid set (or fewer). Otherwise, use hard mode.
-CONSIDER_ALL_WORDS_MAXIMUM = 30
+CONSIDER_ALL_WORDS_MAXIMUM = 160
 
-SCORE_UP_TO_SIZE = 432
-LIST_WORDS_UP_TO = 110
+SCORE_UP_TO_SIZE = 530
+LIST_WORDS_UP_TO = 190
 
 STARTING_WORD = 'rales'
 
