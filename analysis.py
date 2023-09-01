@@ -2,6 +2,8 @@ from collections import Counter, defaultdict
 from functools import lru_cache
 import string
 
+from wordle_rs import get_remaining as get_remaining_rs
+
 from words import valid, answers, likely, unlikely
 
 
@@ -89,12 +91,29 @@ def apply_filters(candidate_answers, filters):
     joined_filter = filter_intersection(filters)
     return set(filter(joined_filter, candidate_answers))
 
-def get_remaining(candidate_answers, actual_answer, guess):
+CACHED = {}
+
+def get_remaining_lib(candidate_answers, actual_answer, guess):
+    if guess == actual_answer:
+        return set()
+    else:
+        filters = make_filters(actual_answer, guess)
+        frozen_candidates = frozenset(candidate_answers)
+        if (filters, frozen_candidates) in CACHED:
+            return CACHED[(filters, frozen_candidates)]
+        else:
+            remaining = get_remaining_rs(set(candidate_answers), actual_answer, guess)
+            CACHED[(filters, frozen_candidates)] = remaining
+            return remaining
+
+def get_remaining_py(candidate_answers, actual_answer, guess):
     if guess == actual_answer:
         return set()
     else:
         filters = make_filters(actual_answer, guess)
         return apply_filters(frozenset(candidate_answers), filters)
+
+get_remaining = get_remaining_lib
 
 def calculate_remaining(possible_answers, answer, guess):
     if guess == answer:
