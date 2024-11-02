@@ -2,6 +2,17 @@
 
 Mostly just written for myself. A tool to run analysis on how good my wordle guesses were.
 
+## Install
+
+```sh
+python3 -m venv venv
+. venv/bin/activate
+pip install maturin
+cd ../wordle-rs
+maturin develop --release
+cd ../wordle
+```
+
 ## Examples
 
 ### Post-game analysis
