@@ -474,6 +474,8 @@ def to_words(raw):
 if __name__ == '__main__':
     import sys
     args = sys.argv
+    if args[0] == 'python':
+        args = args[1:]
     if len(args) > 1 and args[1] == 'test':
         assert calculate_remaining(["aoeuh"], "aoeuh", "") == 1
         assert calculate_remaining(["ab"], "ab", "ac") == 1  # Catch a bad closure
@@ -496,4 +498,4 @@ if __name__ == '__main__':
         answers = to_words(args[2:])
         multi_answer_ai_play(answers)
     else:
-        print("Invoke with test, ai, mai (2+ answers), or ph")
+        print(f"Invoke with test, ai, mai (2+ answers), or ph. Got: %{args}")
