@@ -232,14 +232,15 @@ def multi_answer_ai_play(actuals):
 
 def posthoc_analysis(actual, guesses):
     remaining = frozenset(likely)
-    print(f"Post-hoc analysis of game with answer {actual!r}, with a dictionary size {len(remaining)}")
+    yield f"Post-hoc analysis of game with answer {actual!r}, with a dictionary size {len(remaining)}"
 
     total_luck_score = 1.0
 
     for idx, guess in enumerate(guesses):
 
         guess_count = idx + 1
-        print(f"\nGuess #{guess_count}: {guess!r}")
+        yield ""
+        yield f"Guess #{guess_count}: {guess!r}"
 
         new_remaining = get_remaining(remaining, actual, guess)
 
@@ -272,17 +273,17 @@ def posthoc_analysis(actual, guesses):
             }
             if guess in precalculated:
                 guess_score = precalculated[guess]
-                print(
+                yield (
                     f"At the time, the guess could be expected to leave {guess_score:.1f} words"
                     " (using a precalculated score)"
                 )
             else:
-                print(f"No precalculated score is available for the starting word {guess!r}. Calculating...")
+                yield f"No precalculated score is available for the starting word {guess!r}. Calculating..."
                 guess_score = average_remaining(remaining, guess)
-                print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
+                yield f"At the time, the guess could be expected to leave {guess_score:.1f} words"
         elif len(remaining) < 1200:
             guess_score = average_remaining(remaining, guess)
-            print(f"At the time, the guess could be expected to leave {guess_score:.1f} words")
+            yield f"At the time, the guess could be expected to leave {guess_score:.1f} words"
         else:
             guess_score = None
 
@@ -309,10 +310,10 @@ def posthoc_analysis(actual, guesses):
 
             # calculate skill score
             if guess_score is None:
-                print("Can't calculate skill score if there's no guess score")
+                yield "Can't calculate skill score if there's no guess score"
             else:
                 if guess_score == 0:
-                    print(f"Skill score: ∞/10")
+                    yield f"Skill score: ∞/10"
                 else:
                     # average word count that could be improved by choosing best algo word:
                     wasted_words = guess_score - best_score
@@ -320,13 +321,13 @@ def posthoc_analysis(actual, guesses):
                     waste_fraction = wasted_words / guess_score
                     # invert in order to report the "happy stat"
                     skill_score = (1 - waste_fraction) * 10
-                    print(f"Skill score: {skill_score:.1f}/10")
+                    yield f"Skill score: {skill_score:.1f}/10"
 
                     if all_algo_guesses is not None:
                         easy_wasted_words = guess_score - easy_best_score
                         easy_waste_fraction = easy_wasted_words / guess_score
                         easy_skill_score = (1 - easy_waste_fraction) * 10
-                        print(f"Skill score (easy mode): {easy_skill_score:.1f}/10")
+                        yield f"Skill score (easy mode): {easy_skill_score:.1f}/10"
 
                 # where are you on the best/worst range
                 full_spectrum = (worst_score - best_score)
@@ -336,44 +337,46 @@ def posthoc_analysis(actual, guesses):
                     spectrum_percent = 100
                 else:
                     spectrum_percent = 0
-                print(f"Spectrum percent: {spectrum_percent:.1f}%")
+                yield f"Spectrum percent: {spectrum_percent:.1f}%"
 
                 if all_algo_guesses is not None:
-                    print(f"   vs best {easy_best_guess!r} (easy) at {easy_best_score:.1f} word est.")
-                print(f"   vs best {best_guess!r} at {best_score:.1f} word est.")
-                print(f"   vs worst {worst_guess!r} at {worst_score:.1f} word est.")
+                    yield f"   vs best {easy_best_guess!r} (easy) at {easy_best_score:.1f} word est."
+                yield f"   vs best {best_guess!r} at {best_score:.1f} word est."
+                yield f"   vs worst {worst_guess!r} at {worst_score:.1f} word est."
 
         if guess == actual:
-            print(f"Found the final word.", end=" ")
+            # TODO: don't add a newline after this yielded string, somehow
+            yield f"Found the final word."
         else:
-            print(f"After elimination, {len(new_remaining)} words remain.", end=" ")
+            # TODO: don't add a newline after this yielded string, somehow
+            yield f"After elimination, {len(new_remaining)} words remain."
 
         if guess_score is not None:
             actual_left = len(new_remaining)
             if actual_left == guess_score:
-                print("Got exactly the expected luck")
+                yield "Got exactly the expected luck"
             else:
                 actual_left_with_answer = (actual_left + 1)
                 score_with_answer = (guess_score + 1)
                 luck_score = score_with_answer / actual_left_with_answer
                 total_luck_score *= luck_score
                 if actual_left_with_answer < score_with_answer:
-                    print(f"Got lucky by {luck_score:.1f}x")
+                    yield f"Got lucky by {luck_score:.1f}x"
                 else:
-                    print(f"Got unlucky by {1 / luck_score:.1f}x")
+                    yield f"Got unlucky by {1 / luck_score:.1f}x"
         else:
-            print("")
+            yield ""
 
         remaining = frozenset(new_remaining)
 
         if len(remaining) < LIST_WORDS_UP_TO and guess != actual:
-            print("Specifically:", list(sorted(remaining)))
+            yield f"Specifically: {list(sorted(remaining))}"
 
-    print("")
+    yield ""
     if total_luck_score > 1:
-        print(f"Lucky game, by: {total_luck_score:.1f}x")
+        yield f"Lucky game, by: {total_luck_score:.1f}x"
     else:
-        print(f"Unlucky game, by: {1 / total_luck_score:.1f}x")
+        yield f"Unlucky game, by: {1 / total_luck_score:.1f}x"
 
 
 def to_words(raw):
@@ -487,11 +490,12 @@ if __name__ == '__main__':
         assert calculate_remaining(["ab"], "ab", "cb") == 1  # Catch a bad closure
     elif len(args) == 3 and args[1] == 'ai':
         ai_play(args[2])
-    elif len(args) >= 4 and args[1] == 'ph':
+    elif len(args) >= 3 and args[1] == 'ph':
         guesses = to_words(args[2:])
         actual = guesses[-1]
         try:
-            posthoc_analysis(actual, guesses)
+            for line in posthoc_analysis(actual, guesses):
+                print(line)
         except KeyboardInterrupt:
             print("\nAnalysis ended by Ctrl-C")
     elif len(args) > 3 and args[1] == 'mai':
